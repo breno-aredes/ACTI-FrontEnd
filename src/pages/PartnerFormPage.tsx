@@ -60,9 +60,7 @@ export const PartnerFormPage = () => {
     formState: { errors },
   } = useForm<PartnerFormData>({
     resolver: yupResolver(partnerSchema),
-    defaultValues: {
-      // Removido valor padrão do País - será preenchido apenas quando houver CEP
-    },
+    defaultValues: {},
   });
 
   const watchedCep = watch("ZipCode");
@@ -84,13 +82,25 @@ export const PartnerFormPage = () => {
         try {
           const cepData = await fetchCepData(watchedCep);
           if (cepData) {
-            setValue("Street", cepData.logradouro || "");
-            setValue("District", cepData.bairro || "");
-            setValue("City", cepData.localidade || "");
-            setValue("State", cepData.uf || "");
+            if (cepData.logradouro) {
+              setValue("Street", cepData.logradouro);
+            }
+            if (cepData.bairro) {
+              setValue("District", cepData.bairro);
+            }
+            if (cepData.localidade) {
+              setValue("City", cepData.localidade);
+            }
+            if (cepData.uf) {
+              setValue("State", cepData.uf);
+            }
             setValue("Country", "Brasil");
 
-            await trigger(["Street", "District", "City", "State", "Country"]);
+            if (cepData.logradouro) await trigger("Street");
+            if (cepData.bairro) await trigger("District");
+            if (cepData.localidade) await trigger("City");
+            if (cepData.uf) await trigger("State");
+            await trigger("Country");
           }
         } catch (error) {
           console.error("Erro ao buscar CEP:", error);
@@ -123,8 +133,6 @@ export const PartnerFormPage = () => {
             );
             if (cnpjData.email) setValue("Email", cnpjData.email);
             if (cnpjData.phone) setValue("Phone", cnpjData.phone);
-
-            // Dispara validação para todos os campos preenchidos
             await trigger(["CompanyName", "TradeName"]);
             if (cnpjData.email) await trigger("Email");
             if (cnpjData.phone) await trigger("Phone");
@@ -141,14 +149,11 @@ export const PartnerFormPage = () => {
     return () => clearTimeout(debounceTimer);
   }, [watchedCnpj, watchedPersonalityType, setValue, trigger]);
 
-  // Limpa o campo CNPJ/CPF quando a personalidade muda
   useEffect(() => {
     if (watchedPersonalityType) {
       setValue("CnpjCpf", "");
-      // Limpa o erro do campo também
-      trigger("CnpjCpf");
     }
-  }, [watchedPersonalityType, setValue, trigger]);
+  }, [watchedPersonalityType, setValue]);
 
   const onSubmit = async (data: PartnerFormData) => {
     setIsLoading(true);
@@ -168,15 +173,32 @@ export const PartnerFormPage = () => {
 
       if (response.success) {
         setSuccessMessage("Parceiro cadastrado com sucesso!");
-        reset();
-        setTimeout(() => setSuccessMessage(""), 5000);
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+
+        setTimeout(() => {
+          reset();
+        }, 2000);
+        setTimeout(() => setSuccessMessage(""), 8000);
       } else {
         setErrorMessage(response.message || "Erro ao cadastrar parceiro");
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
       }
     } catch (error) {
+      console.error("Erro no onSubmit:", error);
       setErrorMessage(
         error instanceof Error ? error.message : "Erro inesperado"
       );
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -314,7 +336,15 @@ export const PartnerFormPage = () => {
                       watchedPersonalityType
                     );
                     setValue("CnpjCpf", maskedValue);
-                    // Dispara a validação para limpar o erro
+
+                    // Só dispara validação se o campo estiver completo
+                    const cleanValue = maskedValue.replace(/\D/g, "");
+                    if (cleanValue.length === 11 || cleanValue.length === 14) {
+                      await trigger("CnpjCpf");
+                    }
+                  }}
+                  onBlur={async () => {
+                    // Dispara validação quando o campo perde o foco
                     await trigger("CnpjCpf");
                   }}
                   error={errors.CnpjCpf?.message}

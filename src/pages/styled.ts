@@ -90,18 +90,45 @@ export const SuccessMessage = styled.div`
   background-color: #d4edda;
   color: #155724;
   padding: 15px;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #c3e6cb;
   margin: 20px 0;
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+  animation: slideInDown 0.5s ease-out;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-left: 4px solid #28a745;
 
   &::before {
     content: "✓";
-    margin-right: 10px;
+    margin-right: 12px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
+    color: #28a745;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
@@ -109,18 +136,45 @@ export const ErrorCard = styled.div`
   background-color: #f8d7da;
   color: #721c24;
   padding: 15px;
-  border-radius: 4px;
+  border-radius: 8px;
   border: 1px solid #f5c6cb;
   margin: 20px 0;
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+  animation: slideInDown 0.5s ease-out;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-left: 4px solid #dc3545;
 
   &::before {
     content: "⚠";
-    margin-right: 10px;
+    margin-right: 12px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 20px;
+    color: #dc3545;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 

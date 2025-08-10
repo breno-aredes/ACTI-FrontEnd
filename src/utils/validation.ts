@@ -32,7 +32,16 @@ export const partnerSchema: yup.ObjectSchema<PartnerFormData> = yup.object({
     .string()
     .test("cnpj-cpf-valid", "CNPJ/CPF inválido", function (value) {
       if (!value) return false;
-      return validateCnpjCpf(value);
+
+      const cleanValue = value.replace(/\D/g, "");
+
+      if (cleanValue.length < 11) return true;
+
+      if (cleanValue.length === 11 || cleanValue.length === 14) {
+        return validateCnpjCpf(value);
+      }
+
+      return cleanValue.length < 14;
     })
     .required("CNPJ/CPF é obrigatório"),
 
