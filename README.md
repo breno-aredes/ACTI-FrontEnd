@@ -7,46 +7,48 @@ Este é o frontend da aplicação de cadastro de parceiros comerciais, desenvolv
 - **React 18** - Biblioteca para construção da interface
 - **TypeScript** - Superset do JavaScript com tipagem estática
 - **Vite** - Ferramenta de build e desenvolvimento
-- **Styled Components** - CSS-in-JS para estilização
-- **React Hook Form** - Gerenciamento de formulários
-- **Yup** - Validação de esquemas
-- **Axios** - Cliente HTTP para requisições
-- **React Input Mask** - Máscaras para campos de entrada
+- **Styled Components** - CSS-in-JS para estilização dos componentes
+- **React Hook Form** - Gerenciamento de formulários com performance otimizada
+- **Yup** - Validação de esquemas e formulários
+- **Axios** - Cliente HTTP para requisições às APIs
+- **@hookform/resolvers** - Integração entre React Hook Form e Yup
 
 ## Funcionalidades
 
-### Formulário Completo
+### Formulário Completo de Parceiros
 
-- Todos os campos obrigatórios conforme especificação
-- Validações em tempo real
-- Máscaras aplicadas automaticamente
-- Feedback visual para erros e sucessos
+- Cadastro de parceiros comerciais com todos os campos obrigatórios
+- Validações em tempo real com Yup e React Hook Form
+- Máscaras aplicadas automaticamente conforme o tipo de campo
+- Feedback visual imediato para erros e sucessos
+- Verificação de conectividade com o backend
 
-### Máscaras Implementadas
+### Máscaras Inteligentes
 
-- **CNPJ/CPF**: Máscara automática baseada no tamanho
-- **CEP**: Formato 00000-000
+- **CNPJ/CPF**: Máscara automática baseada na personalidade selecionada
+- **CEP**: Formato 00000-000 com busca automática
 - **Telefone/Celular**: Formatos (11) 1234-5678 e (11) 91234-5678
 
-### Validações
+### Validações Avançadas
 
-- Campos obrigatórios
-- Formato de email válido
-- CNPJ/CPF com dígitos verificadores
-- CEP com 8 dígitos
-- Mensagens de erro específicas por campo
+- Campos obrigatórios com mensagens específicas
+- Validação de formato de email
+- CNPJ/CPF com verificação de dígitos apenas quando completo
+- CEP com 8 dígitos e consulta automática na ViaCEP
+- UF com exatamente 2 caracteres em maiúsculo
 
-### Consumo de APIs Externas
+### Integração com APIs
 
-- **ViaCEP**: Auto-preenchimento de endereço por CEP
-- **ReceitaWS**: Auto-preenchimento de dados da empresa por CNPJ (apenas PJ)
+- **ViaCEP**: Auto-preenchimento de endereço completo por CEP
+- **Consulta CNPJ**: Auto-preenchimento de dados da empresa (apenas PJ)
+- **Health Check**: Verificação automática da disponibilidade do backend
 
-### Feedback Visual
+### Interface Responsiva
 
-- Destaque vermelho para campos com erro
-- Mensagens de sucesso em verde
-- Mensagens de erro em vermelho
-- Indicadores de carregamento para consultas de API
+- Design adaptativo para desktop, tablet e mobile
+- Componentes UI reutilizáveis e estilizados
+- Feedback visual com cores e estados distintos
+- Indicadores de carregamento para operações assíncronas
 
 ## Instalação e Execução
 
@@ -92,39 +94,60 @@ Este é o frontend da aplicação de cadastro de parceiros comerciais, desenvolv
 ```
 src/
 ├── components/
-│   └── PartnerForm.tsx      # Componente principal do formulário
+│   └── ui/                  # Componentes de interface reutilizáveis
+│       ├── Button/          # Componente de botão
+│       ├── Input/           # Componente de input
+│       ├── Select/          # Componente de select
+│       ├── TextArea/        # Componente de textarea
+│       └── index.ts         # Barrel exports dos componentes
+├── pages/
+│   ├── PartnerFormPage.tsx  # Página principal do formulário de cadastro
+│   ├── index.ts             # Exports das páginas
+│   └── styled.ts            # Estilos específicos da página
 ├── services/
 │   └── api.ts               # Serviços para APIs externas e backend
-├── styles/
-│   └── GlobalStyles.ts      # Estilos globais e componentes styled
 ├── types/
 │   └── partners.ts          # Tipos TypeScript
 ├── utils/
 │   ├── masks.ts             # Funções para máscaras e validações
 │   └── validation.ts        # Schema de validação Yup
+├── assets/                  # Recursos estáticos
 ├── App.tsx                  # Componente raiz
-└── main.tsx                 # Ponto de entrada
+├── main.tsx                 # Ponto de entrada
+├── index.css                # Estilos globais
+└── vite-env.d.ts           # Tipos do Vite
 ```
 
 ## APIs Utilizadas
 
-### API Externas
+### APIs Externas
 
-- **ViaCEP**: `https://viacep.com.br/ws/{cep}/json/`
+- **ViaCEP**: `https://viacep.com.br/ws/{cep}/json/` - Auto-preenchimento de endereço por CEP
 
-### API Local
+### API Local (Backend)
 
-- **Backend**: `http://localhost:3000`
-- **Endpoint**: `POST /partners` - Cadastro de parceiros
-- **Endpoint**: `GET /partners/cnpj/:cnpj` - Consulta dados de parceiro pelo CNPJ
+- **Base URL**: `http://localhost:3000`
+- **Health Check**: `GET /health` - Verificação de status do servidor
+- **Cadastro de Parceiros**: `POST /partners` - Cadastro de novos parceiros
+- **Consulta CNPJ**: `GET /cnpj/:cnpj` - Consulta dados de empresa por CNPJ
 
-## Responsividade
+## Arquitetura e Design
 
-O formulário é totalmente responsivo e se adapta a diferentes tamanhos de tela:
+### Componentes Reutilizáveis
 
-- **Desktop**: Layout em colunas
-- **Tablet**: Layout adaptado
-- **Mobile**: Layout em coluna única
+O projeto utiliza uma arquitetura de componentes bem estruturada:
+
+- **Componentes UI**: Button, Input, Select, TextArea com estilos consistentes
+- **Páginas**: Separação clara entre lógica de apresentação e de negócio
+- **Styled Components**: Estilização modular e temática
+
+### Responsividade
+
+O formulário é totalmente responsivo com layout adaptativo:
+
+- **Desktop**: Layout em colunas otimizado para telas grandes
+- **Tablet**: Layout adaptado com espaçamento adequado
+- **Mobile**: Layout em coluna única para melhor usabilidade
 
 ## Validações Implementadas
 
@@ -162,17 +185,31 @@ O formulário é totalmente responsivo e se adapta a diferentes tamanhos de tela
 - Tratamento de erros de API
 - Verificação de conectividade com o backend
 
-## Design
+## Melhorias Implementadas
 
-- Interface limpa e moderna
-- Paleta de cores consistente
-- Feedback visual intuitivo
-- Experiência do usuário otimizada
-- Design responsivo
+### Validação Inteligente
 
-## Observações
+- **CPF/CNPJ**: Validação apenas quando o campo está completo (11 ou 14 dígitos)
+- **CEP**: Auto-preenchimento apenas de campos com dados válidos
+- **Máscaras Condicionais**: Adapta-se automaticamente ao tipo de personalidade
 
-1. **Dependência do Backend**: O frontend verifica se o backend está rodando na porta 3000
-2. **APIs Externas**: As consultas de CEP têm debounce para otimizar performance
-3. **Máscaras Dinâmicas**: A máscara de CNPJ/CPF se adapta automaticamente
-4. **Auto-preenchimento**: Funciona apenas para pessoa jurídica (CNPJ)
+### Performance
+
+- **Debounce**: Implementado nas consultas de CEP (500ms) e CNPJ (1000ms)
+- **Lazy Validation**: Validação de CPF/CNPJ apenas quando necessário
+- **Componentes Otimizados**: Re-renders minimizados com React Hook Form
+
+### Tratamento de Erros
+
+- Verificação de conectividade com o backend
+- Mensagens de erro específicas para cada situação
+- Fallback quando APIs externas falham
+- Limpeza automática de erros quando dados são corrigidos
+
+## Observações Técnicas
+
+1. **Dependência do Backend**: Verifica automaticamente se o backend está rodando na porta 3000
+2. **APIs Externas**: Consultas com timeout e tratamento de falhas
+3. **Tipagem Completa**: TypeScript em todo o projeto para maior segurança
+4. **Validação Progressive**: Não mostra erros até que seja apropriado
+5. **Auto-preenchimento Seguro**: Só preenche campos quando há dados válidos das APIs
